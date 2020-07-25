@@ -2,7 +2,7 @@
 <html>
 <head>
 	<title>Welcome to Google</title>
-
+	<meta name="google-site-verification" content="8Cq7MUoxNNcJTJOSI6R9zKbshGtz80jpd9eLJaG2Wrk" />
 	<meta name="description" content="Search the web for sites and images.">
 	<meta name="keywords" content="Search engine, doodle, websites">
 	<meta name="author" content="Reece Kenney">
