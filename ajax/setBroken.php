@@ -1,8 +1,8 @@
 <?php
-include("../config.php");
+include("../includes/config.php");
 
 if(isset($_POST["src"])) {
-	$query = $con->prepare("UPDATE images SET broken = 1 WHERE imageUrl=:src");
+	$query = $db->prepare("UPDATE images SET broken = 1 WHERE imageUrl=:src");
 	$query->bindParam(":src", $_POST["src"]);
 
 	$query->execute();
