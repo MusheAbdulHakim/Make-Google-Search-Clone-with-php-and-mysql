@@ -1,7 +1,8 @@
 var timer;
+var $ = jQuery;
+
 
 $(document).ready(function() {
-
 
 	$(".result").on("click", function() {
 		
