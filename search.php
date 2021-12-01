@@ -1,133 +1,111 @@
 <?php
-include("config.php");
-include("classes/SiteResultsProvider.php");
-include("classes/ImageResultsProvider.php");
+    include_once 'includes/config.php';
+    include_once 'includes/ResultsProvider.php';
 
-if(isset($_GET["term"])) {
-	$term = $_GET["term"];
-}
-else {
-	exit("You must enter a search term");
-}
+    if(isset($_GET['term'])){
+        $term = $_GET['term'];
+    }else{
+        exit("You must enter a search term");
+    }
+    $type = isset($_GET["type"]) ? $_GET["type"] : "sites";
+    $page = isset($_GET["page"]) ? $_GET["page"] : 1;
 
-$type = isset($_GET["type"]) ? $_GET["type"] : "sites";
-$page = isset($_GET["page"]) ? $_GET["page"] : 1;
+    $resultsProvider = new ResultsProvider($db);
 
-
-	
 ?>
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<title>Welcome to Google</title>
-
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.min.css" />
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search results</title>
+    <link rel="stylesheet" href="assets/css/jquery.fancybox.min.css">
 	<link rel="stylesheet" type="text/css" href="assets/css/style.css">
+	<script src="assets/js/jquery.min.js"></script>
 
-	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 </head>
 <body>
-
-	<div class="wrapper">
+<div class="wrapper">
 	
-		<div class="header">
+    <div class="header">
+        <div class="headerContent">
+
+            <div class="logoContainer">
+                <a href="index.php">
+                    <img src="assets/images/logo.png">
+                </a>
+            </div>
+
+            <div class="searchContainer">
+                <form action="search.php" method="GET">
+                    <div class="searchBarContainer">
+                        <input type="hidden" name="type" value="<?php echo $type; ?>">
+                        <input class="searchBox" type="text" name="term" value="<?php echo $term; ?>" autocomplete="off">
+                        <button class="searchButton">
+                            <img src="assets/images/search.png">
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+        <div class="tabsContainer">
+            <ul class="tabList">
+                <li class="<?php echo $type == 'sites' ? 'active' : '' ?>">
+                    <a href='<?php echo "search.php?term=$term&type=sites"; ?>'>
+                        Sites
+                    </a>
+                </li>
+
+                <li class="<?php echo $type == 'images' ? 'active' : '' ?>">
+                    <a href='<?php echo "search.php?term=$term&type=images"; ?>'>
+                        Images
+                    </a>
+                </li>
+
+                <li  class="<?php echo $type == 'videos' ? 'active' : '' ?>">
+                    <a href="<?php echo "search.php?term=$term&type=videos"; ?>">Videos</a>
+                </li>
+
+            </ul>
 
 
-			<div class="headerContent">
+        </div>
+    </div>
 
-				<div class="logoContainer">
-					<a href="index.php">
-						<img src="assets/images/googleLogo.png">
-					</a>
-				</div>
+    <div class="mainResultsSection">
 
-				<div class="searchContainer">
+        <?php
 
-					<form action="search.php" method="GET">
+            $numResults = $resultsProvider->get_total_result($type,$term);
 
-						<div class="searchBarContainer">
-							<input type="hidden" name="type" value="<?php echo $type; ?>">
-							<input class="searchBox" type="text" name="term" value="<?php echo $term; ?>" autocomplete="off">
-							<button class="searchButton">
-								<img src="assets/images/icons/search.png">
-							</button>
-						</div>
+            echo "<p class='resultsCount'>$numResults results found</p>";
+            $pageSize = 20;
+            if($type=='sites'){
+                echo $resultsProvider->site_html_result($page,$pageSize,$term);
+            }
+            if($type == 'images'){
+                echo $resultsProvider->images_html_result($page,$pageSize,$term);
+            }
+            if($type == 'videos'){
+                echo 'under dev';
+            }
+        ?>
 
-					</form>
+    </div>
 
-				</div>
+    <div class="paginationContainer">
 
-			</div>
+        <div class="pageButtons">
+            <div class="pageNumberContainer">
+                <img src="assets/images/pageStart.png">
+            </div>
 
-
-			<div class="tabsContainer">
-
-				<ul class="tabList">
-
-					<li class="<?php echo $type == 'sites' ? 'active' : '' ?>">
-						<a href='<?php echo "search.php?term=$term&type=sites"; ?>'>
-							Sites
-						</a>
-					</li>
-
-					<li class="<?php echo $type == 'images' ? 'active' : '' ?>">
-						<a href='<?php echo "search.php?term=$term&type=images"; ?>'>
-							Images
-						</a>
-					</li>
-
-				</ul>
-
-
-			</div>
-		</div>
-
-
-
-
-
-
-
-
-
-
-		<div class="mainResultsSection">
-
-			<?php
-			if($type == "sites") {
-				$resultsProvider = new SiteResultsProvider($con);
-				$pageSize = 20;
-			}
-			else {
-				$resultsProvider = new ImageResultsProvider($con);
-				$pageSize = 30;
-			}
-
-			$numResults = $resultsProvider->getNumResults($term);
-
-			echo "<p class='resultsCount'>$numResults results found</p>";
-
-
-
-			echo $resultsProvider->getResultsHtml($page, $pageSize, $term);
-			?>
-
-
-		</div>
-
-
-
-		<div class="paginationContainer">
-
-			<div class="pageButtons">
-
-
-
-				<div class="pageNumberContainer">
-					<img src="assets/images/pageStart.png">
-				</div>
-
-				<?php
+            <?php
 
 				$pagesToShow = 10;
 				$numPages = ceil($numResults / $pageSize);
@@ -166,34 +144,19 @@ $page = isset($_GET["page"]) ? $_GET["page"] : 1;
 
 				}
 
+			?>
+            
+            <div class="pageNumberContainer">
+                <img src="assets/images/pageEnd.png">
+            </div>
 
+        </div>
 
+    </div>
 
-
-				?>
-
-				<div class="pageNumberContainer">
-					<img src="assets/images/pageEnd.png">
-				</div>
-
-
-
-			</div>
-
-
-
-
-		</div>
-
-
-
-
-
-
-
-	</div>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.3.5/jquery.fancybox.min.js"></script>
-	<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
-	<script type="text/javascript" src="assets/js/script.js"></script>
+</div>
 </body>
+<script src="assets/js/jquery.fancybox.min.js"></script>
+<script src="assets/js/masonry.pkgd.min.js"></script>
+<script src="assets/js/script.js"></script>
 </html>
