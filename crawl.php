@@ -1,15 +1,15 @@
 <?php
-include("config.php");
-include("classes/DomDocumentParser.php");
+include("includes/config.php");
+include("includes/DomDocumentParser.php");
 
 $alreadyCrawled = array();
 $crawling = array();
 $alreadyFoundImages = array();
 
 function linkExists($url) {
-	global $con;
+	global $db;
 
-	$query = $con->prepare("SELECT * FROM sites WHERE url = :url");
+	$query = $db->prepare("SELECT * FROM sites WHERE url = :url");
 
 	$query->bindParam(":url", $url);
 	$query->execute();
@@ -18,9 +18,9 @@ function linkExists($url) {
 }
 
 function insertLink($url, $title, $description, $keywords) {
-	global $con;
+	global $db;
 
-	$query = $con->prepare("INSERT INTO sites(url, title, description, keywords)
+	$query = $db->prepare("INSERT INTO sites(url, title, description, keywords)
 							VALUES(:url, :title, :description, :keywords)");
 
 	$query->bindParam(":url", $url);
@@ -32,9 +32,9 @@ function insertLink($url, $title, $description, $keywords) {
 }
 
 function insertImage($url, $src, $alt, $title) {
-	global $con;
+	global $db;
 
-	$query = $con->prepare("INSERT INTO images(siteUrl, imageUrl, alt, title)
+	$query = $db->prepare("INSERT INTO images(siteUrl, imageUrl, alt, title)
 							VALUES(:siteUrl, :imageUrl, :alt, :title)");
 
 	$query->bindParam(":siteUrl", $url);
@@ -181,6 +181,6 @@ function followLinks($url) {
 
 }
 //you can change this to the url of the website you want to crawl
-$startUrl = "http://www.facebook.com";
+$startUrl = "https://github.com/MusheAbdulHakim";
 followLinks($startUrl);
 ?>
