@@ -14,6 +14,5 @@ Go to the file "crawl.php" and at th bottom you would find the url section.chang
 5. If you enjoy and like it, star the repo and follow me if you would like more projects like this.
 
 Thanks you.
-If you have any challenges or problems with it just contact me 
-musheabdulhakim99@gmail.com
-I will be happy to help you
+If you have any challenges or problems with it just open an issue in the repository and describe your problem. with bugs, errors. i will be happy to help.
+Send your pull request I will be happy to merge them.
